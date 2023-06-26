@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원목록페이지</title>
+</head>
+<style>
+    #titleNotice {
+        margin-top: 100px;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #home {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    #container {
+        margin: auto;
+        margin-top: 5%;
+        width: 1000px;
+    }
+
+    table {
+        margin: auto;
+        border-collapse: collapse;
+        text-align: center;
+    }
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+<body>  
+    <div id="titleNotice">
+        회원목록
+    </div>
+    <div id="home">
+        <button type="button" th:onclick="|location.href = `@{/}`|">홈으로</button>
+    </div>
+    <div id="container">
+        <table>
+            <tr>
+                <th>회원번호</th>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>패스워드</th>
+                <th>회원탈퇴</th>
+            </tr>
+            <tr th:each="list: ${listResult}">
+                <td th:text="${list.id}"></td>
+                <td th:text="${list.name}"></td>
+                <td th:text="${list.email}"></td>
+                <td th:text="${list.password}"></td>
+                <td th:if="${list.id == session.loginId}">
+                    <a th:href="@{|/member/delete/${list.id}|}">탈퇴</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

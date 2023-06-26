@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>수정페이지</title>
+</head>
+<style>
+    #titleNotice {
+        margin-top: 100px;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+    }
+    #container {
+        margin: auto;
+        margin-top: 5%;
+        width: 200px;
+    }
+
+    input {
+        background-color: wheat;
+        font-size: 15px;
+        font-weight: bold;
+        width: 200px;
+        height: 50px;
+        margin-top: 20px;
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    input:hover {
+        background-color: white;
+    }
+
+    button {
+        background-color: wheat;
+        font-size: 15px;
+        font-weight: bold;
+        width: 212px;
+        height: 50px;
+        margin-top: 20px;
+        border: 1px solid black;
+    }
+
+    button:hover {
+        background-color: rgb(230, 150, 150);
+    }
+</style>
+<body>
+<div id="titleNotice">
+  정보수정
+</div>
+<form action="/member/update" method="post" name="updateForm">
+  <div id="container">
+    <input type="hidden" name="id" th:value="${updateMember.id}">
+    <input type="text" name="name" th:value="${updateMember.name}" readonly>
+    <input type="text" name="email" th:value="${updateMember.email}" readonly>
+    <input type="password" id="password" name="password">
+    <button type="button" onclick="updatePassCheck()">수정</button>
+  </div>
+</form>
+<script th:inline="javascript">
+  const updatePassCheck = () => {
+    const pass = [[${updateMember.password}]];
+    const inputPass = document.getElementById("password").value;
+    if (pass != inputPass) {
+        alert("수정이 완료되었습니다.");
+        document.updateForm.submit();
+    } else {
+        alert("비밀번호가 일치합니다. 다시입력해주세요.");
+        document.getElementById("password").value = "";
+    }
+  }
+</script>
+</body>
+</html>
