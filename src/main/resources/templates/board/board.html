@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원목록페이지</title>
+</head>
+<style>
+    #titleNotice {
+        margin-top: 100px;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #home {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    #container {
+        margin: auto;
+        margin-top: 20px;
+        width: 1000px;
+    }
+
+    table {
+        margin: auto;
+        border-collapse: collapse;
+        text-align: center;
+    }
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+<body>
+<div id="titleNotice">
+    게시판 목록
+</div>
+<div id="home">
+    <button type="button" th:onclick="|location.href = `@{/}`|">홈으로</button>
+    <button type="button" th:onclick="|location.href=`@{/board/save}`|">글작성</button>
+</div>
+<div id="container">
+    <table>
+        <tr>
+            <th>글번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>조회수</th>
+            <th>작성일</th>
+        </tr>
+        <tr th:each="board: ${boardList}">
+            <td th:text="${board.id}"></td>
+            <td><a th:href="@{|/board/${board.id}|}" th:text="${board.boardTitle}"></a></td>
+            <td th:text="${board.boardWriter}"></td>
+            <td th:text="${board.boardHits}"></td>
+            <td th:text="*{#temporals.format(board.boardCreatedTime, 'yy.MM.dd HH:mm')}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

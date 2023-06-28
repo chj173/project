@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판 조회</title>
+</head>
+<style>
+  #titleNotice {
+    margin-top: 100px;
+    margin-left: 46%;
+    font-size: 50px;
+    font-weight: bold;
+  }
+
+  #container {
+    margin-top: 50px;
+    margin-left: 40%;
+  }
+  p {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  input {
+    width: 400px;
+    height: 30px;
+  }
+  #button-list,
+  #button-update,
+  #button-delete{
+    width: 100px;
+    height: 50px;
+    border: none;
+    border-radius: 10%;
+    background-color: wheat;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  #button-list:hover,
+  #button-update:hover,
+  #button-delete:hover {
+    color: white;
+    background-color: gray;
+  }
+</style>
+<body>
+<div id="titleNotice">
+  게시판 수정
+</div>
+<form action="/board/update" method="post" name="updateForm">
+  <div id="container">
+    <input type="hidden" name="id" th:value="${boardUpdate.id}">
+    <p>작성자</p>
+    <input type="text" name="boardWriter" th:value="${boardUpdate.boardWriter}" readonly>
+    <p>비밀번호</p>
+    <input type="text" name="boardPass" id="boardPass">
+    <p>제목</p>
+    <input type="text" name="boardTitle" th:value="${boardUpdate.boardTitle}" required> <br>
+    <p>내용</p>
+    <textarea name="boardContents" cols="55" rows="15" th:text="${boardUpdate.boardContents}" required></textarea> <br>
+    <input type="hidden" name="boardHits" th:value="${boardUpdate.boardHits}">
+    <button id="button-update" type="button" th:onclick="updateReq()">수정</button>
+  </div>
+</form>
+</body>
+<script th:inline="javascript">
+  const updateReq = () => {
+      const pass = [[${boardUpdate.boardPass}]];
+      const inputPass = document.getElementById("boardPass").value;
+      if (pass == inputPass) {
+          document.updateForm.submit();
+          alert("수정이 완료되었습니다.");
+      } else {
+          alert("비밀번호가 일치하지 않습니다.");
+      }
+  }
+</script>
+</html>

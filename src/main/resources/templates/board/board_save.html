@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>글작성</title>
+</head>
+<style>
+  #titleNotice {
+    margin-top: 100px;
+    margin-left: 46%;
+    font-size: 50px;
+    font-weight: bold;
+  }
+
+  #container {
+    margin-top: 50px;        
+    margin-left: 40%;
+  }
+  p {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  input {
+    width: 400px;
+    height: 30px;
+  }
+  #button-submit {
+    width: 100px;
+    height: 50px;
+    border: none;
+    border-radius: 10%;
+    background-color: wheat;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  #button-submit:hover {
+    color: white;
+    background-color: gray;
+  }
+</style>
+<body>
+<div id="titleNotice">
+    글작성
+</div>
+<form action="/board/save" method="post" name="saveForm">
+  <div id="container">
+    <p>작성자</p>
+    <input type="text" name="boardWriter" th:value="${session.loginEmail}" readonly>
+    <p>비밀번호</p>
+    <input type="text" name="boardPass" placeholder="비밀번호를 입력해주세요" required>
+    <p>제목</p>
+    <input type="text" name="boardTitle" placeholder="제목을 입력해주세요" required> <br>
+    <p>내용</p>
+    <textarea name="boardContents" cols="55" rows="15" placeholder="내용을 입력해주세요" required></textarea> <br>
+    <button id="button-submit" type="submit">글작성</button>
+  </div>
+</form>
+</body>
+</html>

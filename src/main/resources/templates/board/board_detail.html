@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판 조회</title>
+</head>
+<style>
+  #titleNotice {
+    margin-top: 100px;
+    margin-left: 46%;
+    font-size: 50px;
+    font-weight: bold;
+  }
+
+  #container {
+    margin-top: 50px;        
+    margin-left: 40%;
+  }
+  p {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  input {
+    width: 400px;
+    height: 30px;
+  }
+  #button-list,
+  #button-update,
+  #button-delete{
+    width: 100px;
+    height: 50px;
+    border: none;
+    border-radius: 10%;
+    background-color: wheat;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  #button-list:hover,
+  #button-update:hover,
+  #button-delete:hover {
+    color: white;
+    background-color: gray;
+  }
+</style>
+<body>
+<div id="titleNotice">
+    게시판 조회
+</div>
+<div id="container">
+    <p>작성자</p>
+    <input type="text" th:value="${boardDetail.boardWriter}" readonly>
+    <p>제목</p>
+    <input type="text" th:value="${boardDetail.boardTitle}" readonly> <br>
+    <p>내용</p>
+    <textarea cols="55" rows="15" th:text="${boardDetail.boardContents}" readonly></textarea> <br>
+    <button id="button-list" type="button" th:onclick="boardList()">목록</button>
+    <th:block th:if="${session.loginEmail == boardDetail.boardWriter}">
+    <button id="button-update" type="button" th:onclick="boardUpdate()">수정</button>
+    <button id="button-delete" type="button" th:onclick="boardDelete()">삭제</button>
+    </th:block>
+</div>
+</body>
+<script th:inline="javascript">
+    <!-- 각 페이지 요청 -->
+    const boardList = () => {
+        location.href = "/board/board";
+    }
+    const boardUpdate = () => {
+        if(confirm("수정하시겠습니까?")) {
+            const id = [[${boardDetail.id}]];
+            location.href = "/board/update/" + id;
+        } else {
+            alert("수정이 취소되었습니다.");
+        }
+    }
+    const boardDelete = () => {
+        if(confirm("게시글을 삭제하시겠습니까?")) {
+            const id = [[${boardDetail.id}]];
+            location.href = "/board/delete/" + id;
+        } else {
+            alert("삭제가 취소되었습니다.");
+        }
+    }
+</script>
+</html>

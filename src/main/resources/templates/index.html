@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>메인페이지</title>
@@ -13,7 +13,7 @@
     }
     #container {
         margin: auto;
-        margin-top: 5%;
+        margin-top: 40px;
         width: 200px;
     }
 
@@ -40,7 +40,7 @@
 </style>
 <body>
 <div id="titleNotice">
-  Function Project
+   Project
 </div>
 <div id="container">
   <div th:if="${session.loginEmail == null}">
@@ -48,9 +48,10 @@
     <button type="button" th:onclick="|location.href =`@{/member/register}`|">회원가입</button>
   </div>
   <div th:if="${session.loginEmail != null}">
-    <p id="plogin" th:text="|${session.loginEmail}님 환영합니다|"></p>
+    <p id="plogin" th:utext="|${session.loginName}님<br> 환영합니다|"></p>
     <button type="button" th:onclick="|location.href =`@{/member/logout}`|">로그아웃</button>
     <button type="button" th:onclick="|location.href =`@{/member/update}`|">회원정보</button>
+    <button type="button" th:onclick="|location.href =`@{/board/board}`|">게시판</button>
   </div>
 
   <button type="button" th:onclick="list()">회원목록</button>
