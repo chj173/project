@@ -47,6 +47,7 @@ public class MemberController {
             // login success
             session.setAttribute("loginEmail", loginResult.getEmail());
             session.setAttribute("loginId", loginResult.getId());
+            session.setAttribute("loginName", loginResult.getName());
             return "index";
         } else {
             // login fail
