@@ -64,7 +64,7 @@
 <script th:inline="javascript">
     <!-- 각 페이지 요청 -->
     const boardList = () => {
-        location.href = "/board/board";
+        location.href = "/board/board?page=" + [[${page}]];
     }
     const boardUpdate = () => {
         if(confirm("수정하시겠습니까?")) {

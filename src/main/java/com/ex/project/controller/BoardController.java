@@ -3,11 +3,12 @@ package com.ex.project.controller;
 import com.ex.project.dto.BoardDTO;
 import com.ex.project.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,11 +17,22 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    // 전체글
+    // 전체글 + 페이징처리
     @GetMapping("/board")
-    public String board(Model model) {
-        List<BoardDTO> boardDTOList = boardService.findAll();
+    public String board(Model model, @PageableDefault(page = 1) Pageable pageable) {
+        // 전체 게시판을 가져옴
+        Page<BoardDTO> boardDTOList = boardService.findAll(pageable);
+        // 페이징처리
+        // ex) 2페이지 요청시 getNumber=1 이므로 +1을 해줘야함;
+        int nowPage = boardDTOList.getNumber() + 1;
+        int startPage = Math.max(nowPage - 4, 1);
+        int endPage = Math.min(nowPage + 5, boardDTOList.getTotalPages());
+
         model.addAttribute("boardList", boardDTOList);
+        model.addAttribute("nowPage", nowPage);
+        model.addAttribute("startPage", startPage);
+        model.addAttribute("endPage", endPage);
+
         return "/board/board";
     }
     
@@ -39,7 +51,8 @@ public class BoardController {
     
     // 글조회
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model) {
+    public String findById(@PathVariable Long id, Model model,
+                           @PageableDefault(page = 1) Pageable pageable) {
         /*
             게시글 조회시 조회수 하나 올리고
             게시글 데이터를 가져와서 출력
@@ -47,6 +60,8 @@ public class BoardController {
         boardService.updateHits(id); // 조회수 +1
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("boardDetail", boardDTO);
+        // 페이지값 넘겨줌
+        model.addAttribute("page", pageable.getPageNumber());
         return "/board/board_detail";
     }
 

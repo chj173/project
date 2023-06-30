@@ -36,6 +36,9 @@
     a {
         text-decoration: none;
     }
+    #paging {
+        text-align: center;
+    }
 </style>
 <body>
 <div id="titleNotice">
@@ -56,12 +59,29 @@
         </tr>
         <tr th:each="board: ${boardList}">
             <td th:text="${board.id}"></td>
-            <td><a th:href="@{|/board/${board.id}|}" th:text="${board.boardTitle}"></a></td>
+            <td><a th:href="@{|/board/${board.id}|(page=${nowPage})}" th:text="${board.boardTitle}"></a></td>
             <td th:text="${board.boardWriter}"></td>
             <td th:text="${board.boardHits}"></td>
             <td th:text="*{#temporals.format(board.boardCreatedTime, 'yy.MM.dd HH:mm')}"></td>
         </tr>
     </table>
+    <div id="paging">
+        <a th:unless="${boardList.first}" th:href="@{/board/board(page=${nowPage - 1})}">이전</a>
+        <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+            <a th:if="${page != nowPage}" th:href="@{/board/board(page=${page})}" th:text="${page}"></a>
+            <strong th:if="${page == nowPage}" th:text="${page}" style="font-weight : bold"></strong>
+        </th:block>
+        <a th:unless="${boardList.last}" th:href="@{/board/board(page=${nowPage + 1})}">다음</a>
+    </div>
 </div>
 </body>
 </html>
+
+<!--Page 객체에는 다음과 같은 속성이 있다.
+    다음의 속성들은 템플릿(뷰)에서 페이징을 처리할 때 사용할 것이다.
+
+    last : 마지막 페이지인지
+    first : 첫번째 페이지인지
+    number : 현재 페이지 번호
+    totalPages : 전체 페이지 개수 (총 페이지 수)
+    size : 페이지당 나타낼 수 있는 데이터 개수-->

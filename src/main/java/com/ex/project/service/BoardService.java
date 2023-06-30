@@ -4,11 +4,13 @@ import com.ex.project.dto.BoardDTO;
 import com.ex.project.entitiy.BoardEntity;
 import com.ex.project.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,15 +26,34 @@ public class BoardService {
         boardRepository.save(boardEntity);
     }
 
-    // 글목록
-    public List<BoardDTO> findAll() {
-        // Entity -> DTO
-        List<BoardEntity> boardEntityList = boardRepository.findAll();
-        List<BoardDTO> boardDTOList = new ArrayList<>();
-        for (BoardEntity boardEntity : boardEntityList) {
-            boardDTOList.add(BoardDTO.EntityToDTO(boardEntity));
-        }
-        return boardDTOList;
+    // 글목록 + 페이징처리
+    public Page<BoardDTO> findAll(Pageable pageable) {
+        // 페이징처리                               // PageRequest.of(page의 기본값 0)
+        int page = pageable.getPageNumber() - 1; // 1페이지 요청하면 0이여야함
+        int size = 10;
+        Page<BoardEntity> boardEntities =
+                boardRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
+        // 글번호, 제목, 작성자, 조회수, 작성일 ( DTO에 생성자 추가 )
+        // map(Entity -> boardDTO)로 변환 시 boardEntities 메서드 기능(Page기능) 가져옴
+        Page<BoardDTO> boardDTOS =
+                boardEntities.map(board -> new BoardDTO(
+                        board.getId(),
+                        board.getBoardWriter(),
+                        board.getBoardTitle(),
+                        board.getBoardHits(),
+                        board.getCreatedTime()
+                ));
+
+        return boardDTOS;
+
+//        글목록 ( list로 가져올 때 )
+//        Entity -> DTO
+//        List<BoardEntity> boardEntityList = boardRepository.findAll();
+//        List<BoardDTO> boardDTOList = new ArrayList<>();
+//        for (BoardEntity boardEntity : boardEntityList) {
+//            boardDTOList.add(BoardDTO.EntityToDTO(boardEntity));
+//        }
+//        return boardDTOList;
     }
 
     // 조회수 증가
