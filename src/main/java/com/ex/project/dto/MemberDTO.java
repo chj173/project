@@ -1,13 +1,13 @@
 package com.ex.project.dto;
 
 import com.ex.project.entitiy.MemberEntity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class MemberDTO {
 
     private Long id;
