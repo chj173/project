@@ -59,19 +59,23 @@
         </tr>
         <tr th:each="board: ${boardList}">
             <td th:text="${board.id}"></td>
-            <td><a th:href="@{|/board/${board.id}|(page=${nowPage})}" th:text="${board.boardTitle}"></a></td>
+            <td><a th:href="@{|/board/${board.id}|(page=${boardList.number + 1})}" th:text="${board.boardTitle}"></a></td>
             <td th:text="${board.boardWriter}"></td>
             <td th:text="${board.boardHits}"></td>
             <td th:text="*{#temporals.format(board.boardCreatedTime, 'yy.MM.dd HH:mm')}"></td>
         </tr>
     </table>
     <div id="paging">
-        <a th:unless="${boardList.first}" th:href="@{/board/board(page=${nowPage - 1})}">이전</a>
+        <a th:unless="${boardList.first}" th:href="@{/board/board(page=1)}">처음</a>
+        <!-- boardList.number = boardList.getNumber() 동일
+             사용자 2페이지일 때 getNumber() = 1 -->
+        <a th:unless="${boardList.first}" th:href="@{/board/board(page=${boardList.number})}">이전</a>
         <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
-            <a th:if="${page != nowPage}" th:href="@{/board/board(page=${page})}" th:text="${page}"></a>
-            <strong th:if="${page == nowPage}" th:text="${page}" style="font-weight : bold"></strong>
+            <a th:if="${page != boardList.number + 1}" th:href="@{/board/board(page=${page})}" th:text="${page}"></a>
+            <strong th:if="${page == boardList.number + 1}" th:text="${page}" style="font-weight : bold"></strong>
         </th:block>
-        <a th:unless="${boardList.last}" th:href="@{/board/board(page=${nowPage + 1})}">다음</a>
+        <a th:unless="${boardList.last}" th:href="@{/board/board(page=${boardList.number + 2})}">다음</a>
+        <a th:unless="${boardList.last}" th:href="@{/board/board(page=${boardList.totalPages})}">끝</a>
     </div>
 </div>
 </body>

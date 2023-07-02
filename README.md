@@ -34,6 +34,7 @@ JPA를 이용한 회원가입, 게시판
 ## 게시판 (board)
 - 기능
     1. 글목록 (board/board)
+        - 페이징처리
     2. 글작성 (board/save)
     3. 글조회 (board/{id})
     4. 글수정 (board/update/{id})

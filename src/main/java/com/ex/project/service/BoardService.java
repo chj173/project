@@ -33,7 +33,7 @@ public class BoardService {
         int size = 10;
         Page<BoardEntity> boardEntities =
                 boardRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
-        // 글번호, 제목, 작성자, 조회수, 작성일 ( DTO에 생성자 추가 )
+        // 글번호, 작성자, 제목, 조회수, 작성일 ( DTO에 생성자 추가 )
         // map(Entity -> boardDTO)로 변환 시 boardEntities 메서드 기능(Page기능) 가져옴
         Page<BoardDTO> boardDTOS =
                 boardEntities.map(board -> new BoardDTO(

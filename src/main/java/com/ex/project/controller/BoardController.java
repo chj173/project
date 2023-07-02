@@ -23,13 +23,12 @@ public class BoardController {
         // 전체 게시판을 가져옴
         Page<BoardDTO> boardDTOList = boardService.findAll(pageable);
         // 페이징처리
-        // ex) 2페이지 요청시 getNumber=1 이므로 +1을 해줘야함;
-        int nowPage = boardDTOList.getNumber() + 1;
-        int startPage = Math.max(nowPage - 4, 1);
-        int endPage = Math.min(nowPage + 5, boardDTOList.getTotalPages());
+        int blockLimit = 10; // 페이지 번호 갯수
+        // pageable.getPageNumber() 현재페이지 (page=1이므로 1이 기본값)
+        int startPage = (((int)(Math.ceil((double)pageable.getPageNumber() / blockLimit ))) - 1) * blockLimit + 1;
+        int endPage = Math.min(startPage + blockLimit - 1,  boardDTOList.getTotalPages());
 
         model.addAttribute("boardList", boardDTOList);
-        model.addAttribute("nowPage", nowPage);
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
 
