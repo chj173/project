@@ -1,7 +1,9 @@
 package com.ex.project.controller;
 
 import com.ex.project.dto.BoardDTO;
+import com.ex.project.dto.CommentDTO;
 import com.ex.project.service.BoardService;
+import com.ex.project.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,12 +12,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class BoardController {
 
     private final BoardService boardService;
+    private final CommentService commentService;
 
     // 전체글 + 페이징처리
     @GetMapping("/board")
@@ -58,9 +64,16 @@ public class BoardController {
         */
         boardService.updateHits(id); // 조회수 +1
         BoardDTO boardDTO = boardService.findById(id);
-        model.addAttribute("boardDetail", boardDTO);
-        // 페이지값 넘겨줌
-        model.addAttribute("page", pageable.getPageNumber());
+        /* 댓글 목록 가져오기 */
+        List<CommentDTO> commentDTOList = commentService.findAll(id);
+        /* 현재 날짜 */
+        LocalDate nowTime = LocalDate.now();
+
+        model.addAttribute("nowTime", nowTime);
+        model.addAttribute("commentList", commentDTOList);
+        model.addAttribute("board", boardDTO);
+        model.addAttribute("page", pageable.getPageNumber()); // 페이지값 넘겨줌
+
         return "/board/board_detail";
     }
 

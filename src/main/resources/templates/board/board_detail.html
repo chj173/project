@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>게시판 조회</title>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 </head>
 <style>
   #titleNotice {
@@ -20,8 +21,12 @@
     font-weight: bold;
     font-size: 20px;
   }
-  input {
+  .board-form-input {
     width: 400px;
+    height: 30px;
+  }
+  .comment-form-input {
+    width: 320px;
     height: 30px;
   }
   #button-list,
@@ -42,41 +47,112 @@
     color: white;
     background-color: gray;
   }
+
+  #comment-write-btn {
+    height: 33px;
+  }
 </style>
 <body>
 <div id="titleNotice">
     게시판 조회
 </div>
 <div id="container">
+    <!-- 글작성 -->
     <p>작성자</p>
-    <input type="text" th:value="${boardDetail.boardWriter}" readonly>
+    <input type="text" class="board-form-input" th:value="${board.boardWriter}" readonly>
     <p>제목</p>
-    <input type="text" th:value="${boardDetail.boardTitle}" readonly> <br>
+    <input type="text" class="board-form-input" th:value="${board.boardTitle}" readonly> <br>
     <p>내용</p>
-    <textarea cols="55" rows="15" th:text="${boardDetail.boardContents}" readonly></textarea> <br>
+    <textarea cols="55" rows="15" th:text="${board.boardContents}" readonly></textarea> <br>
+
     <button id="button-list" type="button" th:onclick="boardList()">목록</button>
-    <th:block th:if="${session.loginEmail == boardDetail.boardWriter}">
+    <th:block th:if="${session.loginEmail == board.boardWriter}">
     <button id="button-update" type="button" th:onclick="boardUpdate()">수정</button>
     <button id="button-delete" type="button" th:onclick="boardDelete()">삭제</button>
     </th:block>
+
+    <!-- 댓글작성 -->
+    <div id="comment-write">
+        <p>댓글쓰기</p>
+        <input class="comment-form-input" type="text" id="CommentContents" placeholder="댓글 내용">
+        <button type="button" id="comment-write-btn" onclick="commentWrite()">댓글추가</button>
+    </div>
+    <!-- 댓글 출력 -->
+    <div id="comment-list">
+        <table>
+            <tr>
+                <th>댓글번호</th>
+                <th>작성자</th>
+                <th>내용</th>
+                <th>작성시간</th>
+            </tr>
+            <tr th:each="comment: ${commentList}">
+                <td th:text="${comment.id}"></td>
+                <td th:text="${comment.commentWriter}"></td>
+                <td th:text="${comment.commentContents}"></td>
+                <td th:text="${comment.commentCreatedTime}"></td>
+            </tr>
+        </table>
+    </div>
 </div>
 </body>
 <script th:inline="javascript">
+    <!--  댓글 쓰기  -->
+    const commentWrite = () => {
+        const writer = [[${session.loginName}]];
+        const contents = document.getElementById("CommentContents").value;
+        const id = [[${board.id}]];
+
+        $.ajax({
+            type: "post",
+            url: "/comment/save",
+            data: {
+                "commentWriter": writer,
+                "commentContents": contents,
+                "boardId": id
+            },
+            success: function(res) {
+                let output = "<table>";
+                output += "<tr><th>댓글번호</th>";
+                output += "<th>작성자</th>";
+                output += "<th>내용</th>";
+                output += "<th>작성시간</th></tr>";
+                for (let i in res) {
+                    output += "<tr>";
+                    output += "<td>" + res[i].id + "</td>";
+                    output += "<td>" + res[i].commentWriter + "</td>";
+                    output += "<td>" + res[i].commentContents + "</td>";
+                    output += "<td>" + res[i].commentCreatedTime + "</td>";
+                    output += "</tr>";
+                }
+                output += "</table>";
+                document.getElementById("comment-list").innerHTML = output;
+                document.getElementById("CommentContents").value = "";
+            },
+            error: function(err) {
+                console.log("요청 실패", err);
+            }
+        });
+    }
+
     <!-- 각 페이지 요청 -->
+    <!-- 목록 -->
     const boardList = () => {
         location.href = "/board/board?page=" + [[${page}]];
     }
+    <!-- 수정 -->
     const boardUpdate = () => {
         if(confirm("수정하시겠습니까?")) {
-            const id = [[${boardDetail.id}]];
+            const id = [[${board.id}]];
             location.href = "/board/update/" + id;
         } else {
             alert("수정이 취소되었습니다.");
         }
     }
+    <!-- 삭제 -->
     const boardDelete = () => {
         if(confirm("게시글을 삭제하시겠습니까?")) {
-            const id = [[${boardDetail.id}]];
+            const id = [[${board.id}]];
             location.href = "/board/delete/" + id;
         } else {
             alert("삭제가 취소되었습니다.");

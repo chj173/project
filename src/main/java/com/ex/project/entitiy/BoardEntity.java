@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +26,10 @@ public class BoardEntity extends BaseEntity {
     private String boardContents;
     @Column
     private int boardHits;
+
+    /* Board:Comment = 1:N */
+    @OneToMany(mappedBy = "boardEntity", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CommentEntity> commentEntityList = new ArrayList<>();
 
     public static BoardEntity DTOtoEntity(BoardDTO boardDTO) {
         BoardEntity boardEntity = new BoardEntity();
