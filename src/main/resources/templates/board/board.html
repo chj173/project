@@ -47,6 +47,10 @@
 <div id="home">
     <button type="button" th:onclick="|location.href = `@{/}`|">홈으로</button>
     <button type="button" th:onclick="|location.href=`@{/board/save}`|">글작성</button>
+    <form th:action="@{/board/board}" method="get">
+        <input type="text" name="searchKeyword">
+        <button type="submit">검색</button>
+    </form>
 </div>
 <div id="container">
     <table>
@@ -71,7 +75,7 @@
              사용자 2페이지일 때 getNumber() = 1 -->
         <a th:unless="${boardList.first}" th:href="@{/board/board(page=${boardList.number})}">이전</a>
         <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
-            <a th:if="${page != boardList.number + 1}" th:href="@{/board/board(page=${page})}" th:text="${page}"></a>
+            <a th:if="${page != boardList.number + 1}" th:href="@{/board/board(page = ${page}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>
             <strong th:if="${page == boardList.number + 1}" th:text="${page}" style="font-weight : bold"></strong>
         </th:block>
         <a th:unless="${boardList.last}" th:href="@{/board/board(page=${boardList.number + 2})}">다음</a>

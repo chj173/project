@@ -74,6 +74,7 @@ public class BoardService {
         }
     }
 
+    // 글수정
     public BoardDTO update(BoardDTO boardDTO) {
         // DTO -> Entity (DB값 변경)
         BoardEntity boardEntity = BoardEntity.toUpdateEntity(boardDTO);
@@ -81,7 +82,29 @@ public class BoardService {
         return findById(boardDTO.getId());
     }
 
+    // 글삭제
     public void delete(Long id) {
         boardRepository.deleteById(id);
+    }
+    
+    // 글제목으로 검색
+    public Page<BoardDTO> boardSearchList(String searchKeyword, Pageable pageable) {
+        int page = pageable.getPageNumber() - 1;
+        int size = 10;
+
+        // Entity -> DTO
+        Page<BoardEntity> byBoardTitleContaining =
+                boardRepository.findByBoardTitleContaining(searchKeyword,
+                        PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"id")));
+
+        Page<BoardDTO> boardDTOS =
+                byBoardTitleContaining.map(board -> new BoardDTO(
+                        board.getId(),
+                        board.getBoardWriter(),
+                        board.getBoardTitle(),
+                        board.getBoardHits(),
+                        board.getCreatedTime()
+                ));
+        return boardDTOS;
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -23,11 +22,20 @@ public class BoardController {
     private final BoardService boardService;
     private final CommentService commentService;
 
-    // 전체글 + 페이징처리
+    // 전체글 + 페이징처리 , 검색기능
     @GetMapping("/board")
-    public String board(Model model, @PageableDefault(page = 1) Pageable pageable) {
-        // 전체 게시판을 가져옴
-        Page<BoardDTO> boardDTOList = boardService.findAll(pageable);
+    public String board(Model model, @PageableDefault(page = 1) Pageable pageable, String searchKeyword) {
+
+        Page<BoardDTO> boardDTOList;
+
+        if (searchKeyword == null) {
+            // 전체 게시판을 가져옴
+            boardDTOList = boardService.findAll(pageable);
+        } else {
+            // 검색한 게시판을 가져옴
+            boardDTOList = boardService.boardSearchList(searchKeyword, pageable);
+        }
+
         // 페이징처리
         int blockLimit = 10; // 페이지 번호 갯수
         // pageable.getPageNumber() 현재페이지 (page=1이므로 1이 기본값)
@@ -66,10 +74,7 @@ public class BoardController {
         BoardDTO boardDTO = boardService.findById(id);
         /* 댓글 목록 가져오기 */
         List<CommentDTO> commentDTOList = commentService.findAll(id);
-        /* 현재 날짜 */
-        LocalDate nowTime = LocalDate.now();
 
-        model.addAttribute("nowTime", nowTime);
         model.addAttribute("commentList", commentDTOList);
         model.addAttribute("board", boardDTO);
         model.addAttribute("page", pageable.getPageNumber()); // 페이지값 넘겨줌
